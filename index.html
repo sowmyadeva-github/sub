@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Atyant OPS</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <section id="authPage" class="auth-page">
+    <div class="auth-card">
+      <div class="auth-brand">
+        <h1>Atyant OPS</h1>
+        <p>INTERNAL SUBMISSION PIPELINE</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button id="loginTab" class="active" onclick="showAuth('login')">Login</button>
+        <button id="signupTab" onclick="showAuth('signup')">Create Account</button>
+      </div>
+
+      <div id="loginBox" class="auth-box">
+        <h2>Login</h2>
+        <p>Login if you already have an account.</p>
+
+        <input id="loginEmail" type="email" placeholder="Email address" />
+        <input id="loginPassword" type="password" placeholder="Password" />
+
+        <button class="primary-btn full" onclick="loginUser()">Login</button>
+
+        <p class="small-text">
+          New user?
+          <span onclick="showAuth('signup')">Create an account</span>
+        </p>
+      </div>
+
+      <div id="signupBox" class="auth-box hidden">
+        <h2>Create Account</h2>
+        <p>Create your account as Intern or Manager.</p>
+
+        <input id="signupName" type="text" placeholder="Full name" />
+        <input id="signupEmail" type="email" placeholder="Email address" />
+
+        <select id="signupRole">
+          <option value="">Select role</option>
+          <option value="intern">Intern</option>
+          <option value="manager">Manager</option>
+        </select>
+
+        <input id="signupPassword" type="password" placeholder="Create password" />
+
+        <button class="primary-btn full" onclick="createAccount()">Create Account</button>
+
+        <p class="small-text">
+          Already have an account?
+          <span onclick="showAuth('login')">Login</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div id="appPage" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand">
+        <h2>Atyant</h2>
+        <p>OPS — INTERNAL</p>
+      </div>
+
+      <nav id="navMenu"></nav>
+
+      <div class="profile">
+        <div class="avatar" id="profileAvatar">U</div>
+        <div>
+          <h4 id="profileName">User</h4>
+          <p id="profileRole">ROLE</p>
+        </div>
+      </div>
+
+      <button class="logout-btn" onclick="logoutUser()">Logout</button>
+    </aside>
+
+    <main class="main">
+      <section id="tasksPage" class="page active">
+        <div class="topbar">
+          <div>
+            <h1 id="pageTitle">Tasks</h1>
+            <p id="taskSummary">0 active tasks — 0 completed</p>
+          </div>
+
+          <div class="top-actions">
+            <button class="refresh-btn" onclick="renderAll()">⟳</button>
+            <button id="newTaskBtn" class="primary-btn" onclick="openTaskModal()">＋ New Task</button>
+          </div>
+        </div>
+
+        <div id="managerStats" class="stats-grid manager-stats hidden">
+          <div class="stat-card">
+            <span>👥</span>
+            <div>
+              <h3 id="totalInterns">0</h3>
+              <p>Total Interns</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span>📝</span>
+            <div>
+              <h3 id="managerTotalTasks">0</h3>
+              <p>Total Tasks</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span>🚀</span>
+            <div>
+              <h3 id="managerProgressTasks">0</h3>
+              <p>In Progress</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span>👀</span>
+            <div>
+              <h3 id="managerReviewTasks">0</h3>
+              <p>Review</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span>✅</span>
+            <div>
+              <h3 id="managerDoneTasks">0</h3>
+              <p>Completed</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span>⚠️</span>
+            <div>
+              <h3 id="managerBlockedTasks">0</h3>
+              <p>Blocked</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="internStats" class="stats-grid intern-stats hidden">
+          <div class="stat-card">
+            <span>📝</span>
+            <div>
+              <h3 id="internTotalTasks">0</h3>
+              <p>My Tasks</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span>🚀</span>
+            <div>
+              <h3 id="internActiveTasks">0</h3>
+              <p>Active</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span>📤</span>
+            <div>
+              <h3 id="internSubmittedTasks">0</h3>
+              <p>Submitted</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span>✅</span>
+            <div>
+              <h3 id="internCompletedTasks">0</h3>
+              <p>Completed</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <span>⚠️</span>
+            <div>
+              <h3 id="internBlockedTasks">0</h3>
+              <p>Blocked</p>
+            </div>
+          </div>
+        </div>
+
+        <div id="internProgressBadge" class="panel progress-highlight hidden">
+          <h2>🏅 My Progress Badge</h2>
+          <p id="myProgressText">Progress: 0% — Beginner</p>
+          <div class="progress-track">
+            <div id="myProgressFill" class="progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button id="boardTab" class="tab active" onclick="switchTab('board')">Board</button>
+          <button id="listTab" class="tab" onclick="switchTab('list')">List</button>
+          <button id="myTasksTab" class="tab" onclick="switchTab('my')">My Tasks</button>
+        </div>
+
+        <div id="boardView" class="tab-view active">
+          <div class="board">
+            <div class="column">
+              <div class="column-head">
+                <h3><span class="dot gray"></span> TO DO</h3>
+                <span id="todoCount">0</span>
+              </div>
+              <div id="todoColumn" class="task-list"></div>
+            </div>
+
+            <div class="column">
+              <div class="column-head">
+                <h3><span class="dot blue"></span> IN PROGRESS</h3>
+                <span id="progressCount">0</span>
+              </div>
+              <div id="progressColumn" class="task-list"></div>
+            </div>
+
+            <div class="column">
+              <div class="column-head">
+                <h3><span class="dot purple"></span> REVIEW</h3>
+                <span id="reviewCount">0</span>
+              </div>
+              <div id="reviewColumn" class="task-list"></div>
+            </div>
+
+            <div class="column">
+              <div class="column-head">
+                <h3><span class="dot green"></span> DONE</h3>
+                <span id="doneCount">0</span>
+              </div>
+              <div id="doneColumn" class="task-list"></div>
+            </div>
+
+            <div class="column">
+              <div class="column-head">
+                <h3><span class="dot red"></span> BLOCKED</h3>
+                <span id="blockedCount">0</span>
+              </div>
+              <div id="blockedColumn" class="task-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="listView" class="tab-view">
+          <div class="panel">
+            <div class="panel-head">
+              <h2 id="listTitle">📋 Task List</h2>
+              <p id="listSubtitle">Tasks shown in table format for clear tracking.</p>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Task</th>
+                    <th>Intern</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Progress</th>
+                    <th>Submission</th>
+                    <th>Feedback</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="taskTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="myTasksView" class="tab-view">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>👤 My Tasks</h2>
+              <p>Interns can see only their own assigned work here.</p>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Task</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Progress</th>
+                    <th>Required</th>
+                    <th>Feedback</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="myTaskTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div id="managerExtra" class="hidden">
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>📤 Review Submission Queue</h2>
+                <p>Only submitted tasks waiting for manager review.</p>
+              </div>
+              <div id="reviewQueue"></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <h2>⚠️ Blocker Alerts</h2>
+                <p>Interns who are stuck or need help.</p>
+              </div>
+              <div id="blockerList"></div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel-head">
+                <h2>👥 Intern Progress Table</h2>
+                <p>All interns progress in table format.</p>
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Intern</th>
+                      <th>Email</th>
+                      <th>Assigned</th>
+                      <th>Submitted</th>
+                      <th>Approved</th>
+                      <th>Blocked</th>
+                      <th>Progress</th>
+                    </tr>
+                  </thead>
+                  <tbody id="internProgressTable"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <h2>✅ Ready for Next Task</h2>
+                <p>Completed interns ready for new assignment.</p>
+              </div>
+              <div id="readyList"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="timelinePanel" class="panel">
+          <div class="panel-head">
+            <h2 id="timelineTitle">🧾 Timeline</h2>
+            <p>Proof log to avoid misinterpretation.</p>
+          </div>
+          <div id="timelineList"></div>
+        </div>
+      </section>
+
+      <section id="notificationsPage" class="page">
+        <div class="topbar">
+          <div>
+            <h1>Notifications</h1>
+            <p id="notificationText">Your notifications.</p>
+          </div>
+          <button class="secondary-btn" onclick="clearNotifications()">Clear Notifications</button>
+        </div>
+
+        <div id="allNotifications"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="taskModal" class="modal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h2>＋ Assign New Task</h2>
+        <button onclick="closeTaskModal()">×</button>
+      </div>
+
+      <div class="form-grid">
+        <input id="taskTitle" placeholder="Task title" />
+        <select id="assignIntern">
+          <option value="">Select intern</option>
+        </select>
+        <select id="priority">
+          <option value="">Priority</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+      </div>
+
+      <textarea id="taskDescription" placeholder="Task description"></textarea>
+
+      <div class="requirements">
+        <label><input type="checkbox" value="Frontend GitHub Link" /> Frontend GitHub</label>
+        <label><input type="checkbox" value="Backend GitHub Link" /> Backend GitHub</label>
+        <label><input type="checkbox" value="Live Link" /> Live Link</label>
+        <label><input type="checkbox" value="README" /> README</label>
+        <label><input type="checkbox" value="Screenshots" /> Screenshots</label>
+        <label><input type="checkbox" value="Explanation Note" /> Explanation Note</label>
+      </div>
+
+      <button class="primary-btn full" onclick="assignTask()">Assign Task</button>
+    </div>
+  </div>
+
+  <div id="detailsModal" class="modal">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h2 id="modalTitle">Task Details</h2>
+        <button onclick="closeDetailsModal()">×</button>
+      </div>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
